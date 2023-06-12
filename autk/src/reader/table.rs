@@ -1,6 +1,6 @@
-use regex::Regex;
 use crate::reader::acct::Acct;
 use crate::reader::chart::ChartData;
+use crate::funcs::check;
 #[derive(Debug)]
 pub struct Table{
 }
@@ -21,5 +21,7 @@ pub fn test()->(){
     );
     let b1:Table=Table::new();
     let c1:&ChartData=a1.get_amt(&b1);
-    println!("{:?}",c1);
+    check(&a1);
+    check(&b1);
+    check(&c1);
 }

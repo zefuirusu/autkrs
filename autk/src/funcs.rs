@@ -23,28 +23,9 @@ impl<'a,T> LayoutInfo<&'a T>
         }
     }
 }
-fn check<'a,T>(t:&'a T)->()
+pub fn check<'a,T>(t:&'a T)->()
 where T:std::fmt::Debug,
 {
     let l=LayoutInfo::new(t);
     println!("{:?}",l);
-}
-#[derive(Debug,Clone)]
-struct San{
-    name:String,
-    des:String,
-    value:i32,
-}
-impl San{
-    fn new()->Self{
-        San{
-            name:"wrong".to_string(),
-            des:"SanFrom;".to_string(),
-            value:1024i32,
-        }
-    }
-}
-pub fn test() {
-    let a=San::new();
-    check(&a);
 }
