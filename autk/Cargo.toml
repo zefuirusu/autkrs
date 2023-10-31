@@ -7,7 +7,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-office = "0.8.1"
-polars = "0.30.0"
+calamine = "0.22.1"
+ndarray = "0.15.6"
+polars = "0.26.0"
 regex = "1.8.4"
-tokio = "1.28.2"
+# office = "0.8.1"
+# tokio = "1.28.2"

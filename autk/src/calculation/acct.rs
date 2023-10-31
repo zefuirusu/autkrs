@@ -1,12 +1,4 @@
-use crate::reader::table::Table;
-use crate::reader::chart::ChartData;
-#[derive(Debug)]
-pub struct Acct{
-    accid:String, 
-    accna:String,
-    is_cr:bool,
-    acclv:u8,
-}
+use crate::calculation::{Acct,AcctAmt,ChartData,Table};
 impl Acct{
     pub fn new(accid:&str,accna:&str,is_cr:bool,level:u8)->Self{
         Self{
@@ -22,13 +14,6 @@ impl Acct{
     )->&'a ChartData{
         from_table.get_amt(self.accid.clone())
     }
-}
-#[derive(Debug)]
-pub struct AcctAmt{
-    start:f64,
-    debit:f64,
-    credit:f64,
-    end:f64,
 }
 impl AcctAmt{
     pub fn blank()->Self{

@@ -1,11 +1,4 @@
-use std::collections::BTreeMap;
-#[derive(Debug)]
-pub struct ChartData{
-    st:f64,
-    dr:f64,
-    cr:f64,
-    end:f64,
-}
+use crate::calculation::ChartData;
 impl ChartData{
     pub fn blank<'a>()->&'a Self{
         &Self{
@@ -22,11 +15,3 @@ impl ChartData{
         self.st+self.dr-self.cr-self.end<0.004
     }
 }
-#[derive(Debug)]
-pub struct Chart{
-    name:String,
-    cols:Vec<String>,
-    data:BTreeMap<String,ChartData>,
-}
-pub struct GlData{}
-pub struct GL{}

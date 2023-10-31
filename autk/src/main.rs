@@ -1,5 +1,3 @@
-use autk::reader::table::test;
 fn main() {
-    println!("Welcome to AUTK!");
-    test();
+    println!("Welcome to AUTK! current version 4.0.");
 }
