@@ -5,7 +5,7 @@ use autk::calculation::Acct;
 use autk::calculation::Table;
 use autk::calculation::ChartData;
 use autk::brother::BkBro;
-const YLPATH:&'static str="yl_rm_2021.xlsx";
+const YLPATH:&'static str="./yl_rm_2021.xlsx";
 #[test]
 fn test_table()->(){
     let a1:Acct=Acct::new(
