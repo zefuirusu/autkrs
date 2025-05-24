@@ -7,7 +7,7 @@ use autk::calculation::ChartData;
 use autk::brother::BkBro;
 const YLPATH:&'static str="./yl_rm_2021.xlsx";
 #[test]
-fn test_table()->(){
+fn test_table_2()->(){
     let a1:Acct=Acct::new(
         "1002",
         "bank",
@@ -21,7 +21,7 @@ fn test_table()->(){
     check(&c1);
 }
 #[test]
-fn test_bro()->(){
+fn test_bro_2()->(){
     let mut workbook: Xlsx<_> = open_workbook(Path::new(YLPATH)).expect("Cannot open file");
     workbook.load_tables();
     let workbook2: Xlsx<_> = open_workbook(Path::new(YLPATH)).expect("Cannot open file");
