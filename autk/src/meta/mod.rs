@@ -1,5 +1,22 @@
 use std::collections::BTreeMap;
 
+#[derive(Debug,Clone)]
+pub struct MatchMeta{
+  ifp:&'static str,
+  shtna:&'static str,
+  title:usize,
+  resu_col:usize,
+  match_col:usize,
+}
+pub trait ArgParse{
+  fn parse(
+    arg_input:&str
+  )->Result<MatchMeta,&str>{
+    todo!()
+  }
+}
+impl ArgParse for MatchMeta{}
+
 pub trait Meta{
     fn keep_additional()->bool{false}
     // fn load()->BTreeMap<String,u8>;
