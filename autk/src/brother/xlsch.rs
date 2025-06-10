@@ -1,12 +1,14 @@
+use std::path::PathBuf;
 use calamine::{open_workbook, DataType, Reader, Xlsx};
-use comfy_table::{Cell, Table};
 use rayon::prelude::*;
 use regex::Regex;
-use std::path::PathBuf;
+use comfy_table::{Cell, Table};
 
 use crate::meta::MatchMeta;
+use crate::cli::evince::{term_show_table,term_show_rows};
+use crate::brother::xlshow::{get_row,get_rows};
  
-fn cell_value2string(
+pub fn cell_value2string(
   cell_value:&DataType,
 )->String{
   match cell_value{
@@ -16,6 +18,9 @@ fn cell_value2string(
       DataType::Bool(b) => if *b { "true".to_string() } else { "false".to_string() },
       DataType::DateTime(f) => f.to_string(),
       DataType::Empty => "".to_string(),
+      DataType::Duration(d) => format!("{:?}", d),
+      DataType::DateTimeIso(dt) => format!("{}", dt),
+      DataType::DurationIso(d) => format!("{}", d),
       _ => "".to_string(),
   }
 }
@@ -71,6 +76,11 @@ pub fn re_match_col(
         }
       }
     ).collect();
+    //// TODO:
+    // term_show_table(
+      // get_row(title,ifp,shtna,),
+      // get_rows(,ifp,shtna),
+    // )
   let mut table=Table::new();
   table.set_header(
     vec![

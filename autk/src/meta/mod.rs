@@ -1,6 +1,12 @@
 use std::collections::BTreeMap;
 
 #[derive(Debug,Clone)]
+pub struct ShtMeta{
+  ifp:&'static str,
+  shtna:&'static str,
+  title:usize,
+}
+#[derive(Debug,Clone)]
 pub struct MatchMeta{
   ifp:&'static str,
   shtna:&'static str,

@@ -1,8 +1,10 @@
 // use std::path::PathBuf;
 use clap::{Parser,Subcommand,Args};
 
-use crate::brother::xlsch::re_match_col;
 use crate::meta::MatchMeta;
+use crate::brother::xlsch::re_match_col;
+use crate::brother::xlshow::{get_row,get_rows};
+use crate::cli::evince::term_show_table;
 
 #[derive(Debug,Parser)]
 #[command(author, name="autk",version="4.0", about="Auditors' Toolkit.", long_about = None)]
@@ -42,6 +44,13 @@ enum Showlv2cmd{
       arg_required_else_help=true
     )
   ]MultiMatch(MultiMatchArgs),
+  #[
+    command(
+      name="row",
+      about="show one or several rows.",
+      arg_required_else_help=true,
+    )
+  ]Row(RowArgs)
 }
 #[derive(Debug,Args)]
 struct ColMatchArgs{
@@ -61,6 +70,17 @@ struct ColMatchArgs{
   // save:String,
   // #[arg(short,long="cal",value_name="string",help="apply calculation to the results, in the result column.",value_parser=["sum","average","count"],default_value="sum")]
   // cal:String,
+}
+#[derive(Debug,Clone,Args)]
+struct RowArgs{
+  #[arg(default_value="1",short='n',long="num",value_name="int",num_args=1..,help="row(s) to show.")]
+  row:Vec<usize>,
+  #[arg(short,long="shtna",value_name="string",help="sheet name")]
+  shtna:String,
+  #[arg(short,long="ifp",value_name="string",help="input file path.")]
+  ifp:String,
+  #[arg(required=false,default_value="1",short,long="title",value_name="int",help="sheet name")]
+  title:usize,
 }
 fn parse_shtmeta(
   single_meta:&str,
@@ -91,6 +111,12 @@ pub fn run_autk()->(){
         },
         Showlv2cmd::MultiMatch(_multimatchargs)=>{
           todo!()
+        },
+        Showlv2cmd::Row(_row_args)=>{
+          term_show_table(
+            get_row(_row_args.title,_row_args.clone().ifp,_row_args.clone().shtna),
+            get_rows(_row_args.clone().row,_row_args.clone().ifp,_row_args.clone().shtna),
+          );
         },
       }
     },
