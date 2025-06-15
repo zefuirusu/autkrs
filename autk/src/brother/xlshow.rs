@@ -1,9 +1,27 @@
 use std::path::PathBuf;
+use std::collections::HashMap;
 use calamine::{open_workbook, DataType, Reader, Xlsx};
 use rayon::prelude::*;
 
 use crate::brother::cell_value2string;
 
+pub fn get_shape(
+  ifp:String,
+)->HashMap<String,Vec<usize>>{
+  //TODO: This function does not run at multi-thread by rayon currently;
+  let mut shape:HashMap<String,Vec<usize>>=HashMap::new();
+  let mut wb:Xlsx<_>=open_workbook(PathBuf::from(ifp.as_str()))
+    .expect("Cannot open Excel! Invalid file path!");
+  for shtna in wb.sheet_names(){
+    let range=wb.worksheet_range(&shtna)
+      .expect("Cannot get sheet!")
+      .expect("Cannot get range!");
+    shape.insert(
+      shtna.to_string(),Vec::from([range.get_size().0,range.get_size().1])
+    );
+  }
+  shape
+}
 pub fn get_row(
   row_index:usize,// starts from 1;
   ifp:String,

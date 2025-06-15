@@ -3,11 +3,11 @@ use clap::{Parser,Subcommand,Args};
 
 use crate::meta::MatchMeta;
 use crate::brother::xlsch::re_match_col;
-use crate::brother::xlshow::{get_row,get_rows};
+use crate::brother::xlshow::{get_row,get_rows,get_shape};
 use crate::cli::evince::term_show_table;
 
 #[derive(Debug,Parser)]
-#[command(author, name="autk",version="4.0", about="Auditors' Toolkit.", long_about = None)]
+#[command(author="sk",name="autk",version="4.0.1", about="Auditors' Toolkit.", long_about = "A series of tools for auditors, who is struggling near the end of the year.")]
 struct AUTK{
   #[command(subcommand)]
   basecmd:Lv1cmd,
@@ -50,7 +50,19 @@ enum Showlv2cmd{
       about="show one or several rows.",
       arg_required_else_help=true,
     )
-  ]Row(RowArgs)
+  ]Row(RowArgs),
+  #[
+    command(
+      name="shape",
+      about="show shape of the Excel.",
+      arg_required_else_help=true,
+    )
+  ]Shape(IfpArg)
+}
+#[derive(Debug,Args)]
+struct IfpArg{
+  #[arg(index=1,value_name="string",help="input file path")]
+  ifp:String,
 }
 #[derive(Debug,Args)]
 struct ColMatchArgs{
@@ -118,6 +130,9 @@ pub fn run_autk()->(){
             get_row(_row_args.title,_row_args.clone().ifp,_row_args.clone().shtna),
             get_rows(_row_args.clone().row,_row_args.clone().ifp,_row_args.clone().shtna),
           );
+        },
+        Showlv2cmd::Shape(_ifp)=>{
+          println!("{:?}",get_shape(_ifp.ifp));
         },
       }
     },
