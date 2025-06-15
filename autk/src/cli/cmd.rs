@@ -100,13 +100,14 @@ pub fn run_autk()->(){
     Lv1cmd::Show(_showcmd)=>{
       match _showcmd.subcmd{
         Showlv2cmd::Match(_colmatchargs)=>{
-          re_match_col(
-            _colmatchargs.regex,
-            _colmatchargs.resu,
-            _colmatchargs.col,
-            _colmatchargs.shtna,
-            _colmatchargs.title,
-            _colmatchargs.ifp,
+          term_show_table(
+            get_row(_colmatchargs.title.clone(),_colmatchargs.ifp.clone(),_colmatchargs.shtna.clone()),
+            re_match_col(
+              _colmatchargs.regex,
+              _colmatchargs.col,
+              _colmatchargs.shtna.clone(),
+              _colmatchargs.ifp.clone(),
+            ),
           );
         },
         Showlv2cmd::MultiMatch(_multimatchargs)=>{

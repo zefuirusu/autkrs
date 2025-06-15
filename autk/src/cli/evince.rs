@@ -1,4 +1,4 @@
-use comfy_table::{Cell, Table};
+use comfy_table::{Cell,Table,ContentArrangement};
 use rayon::prelude::*;
 
 pub fn term_show_rows(
@@ -18,6 +18,7 @@ pub fn term_show_table(
 ->()
 {
   let mut table:Table=Table::new();
+  table.set_content_arrangement(ContentArrangement::Dynamic);
   table.set_header(
     title.into_iter().map(
       |string_value|{Cell::new(string_value).add_attribute(comfy_table::Attribute::Bold)}

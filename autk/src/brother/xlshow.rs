@@ -2,7 +2,7 @@ use std::path::PathBuf;
 use calamine::{open_workbook, DataType, Reader, Xlsx};
 use rayon::prelude::*;
 
-use crate::brother::xlsch::cell_value2string;
+use crate::brother::cell_value2string;
 
 pub fn get_row(
   row_index:usize,// starts from 1;
