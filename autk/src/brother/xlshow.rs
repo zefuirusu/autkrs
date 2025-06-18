@@ -23,26 +23,33 @@ pub fn get_shape(
   shape
 }
 pub fn get_row(
-  row_index:usize,// starts from 1;
+  _row_index:Option<usize>,// starts from 1;
   ifp:String,
   shtna:String,
 )->Vec<String>{
-  let mut wb:Xlsx<_>= open_workbook(PathBuf::from(ifp.as_str()))
-    .expect("Cannot open the target Excel!");
-  wb.worksheet_range(&shtna.as_str())
-    .expect("This sheet does not exist!")
-    .expect("Fail to get range!")
-    .rows()
-    .nth(row_index-1)
-    .expect("Fail to the this row!")
-    .into_par_iter()
-    .map(
-      |cell_value|{
-        cell_value2string(cell_value)
-      }
-    )
-    // .into_iter()
-    .collect()
+  match _row_index{
+    Some(row_index)=>{
+      let mut wb:Xlsx<_>= open_workbook(PathBuf::from(ifp.as_str()))
+        .expect("Cannot open the target Excel!");
+      wb.worksheet_range(&shtna.as_str())
+        .expect("This sheet does not exist!")
+        .expect("Fail to get range!")
+        .rows()
+        .nth(row_index-1)
+        .expect("Fail to the this row!")
+        .into_par_iter()
+        .map(
+          |cell_value|{
+            cell_value2string(cell_value)
+          }
+        )
+        // .into_iter()
+        .collect()
+    },
+    None=>{
+      Vec::new()
+    },
+  }
 }
 pub fn get_rows(
   rows_index:Vec<usize>,
@@ -53,7 +60,7 @@ pub fn get_rows(
     .into_par_iter()
     .map(
       |row_index|{
-        get_row(row_index,ifp.clone(),shtna.clone(),)
+        get_row(Some(row_index),ifp.clone(),shtna.clone(),)
       }
     ).collect()
 }

@@ -4,7 +4,6 @@ use rayon::prelude::*;
 use regex::Regex;
 use comfy_table::{Cell, Table};
 
-use crate::meta::MatchMeta;
 use crate::cli::evince::{term_show_table,term_show_rows};
 use crate::brother::cell_value2string;
 use crate::brother::xlshow::{get_row,get_rows};
@@ -68,7 +67,10 @@ pub fn re_match_col(
 }
 pub fn par_re_match_col(
   regex_str:String,
-  meta:MatchMeta,
+  match_col:usize,
+  shtna:String,
+  ifp:String,
+  // meta:MatchMeta,
 )->Vec<String>{
   todo!()
 }

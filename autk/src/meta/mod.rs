@@ -14,6 +14,7 @@ pub struct MatchMeta{
   resu_col:usize,
   match_col:usize,
 }
+/*
 pub trait ArgParse{
   fn parse(
     arg_input:&str
@@ -22,6 +23,7 @@ pub trait ArgParse{
   }
 }
 impl ArgParse for MatchMeta{}
+*/
 
 pub trait Meta{
     fn keep_additional()->bool{false}

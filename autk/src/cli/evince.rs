@@ -37,5 +37,5 @@ pub fn try_show_table()->(){
     vec![15.to_string(),8.to_string(),22.to_string()],
     vec![215.to_string(),88.to_string(),22.to_string()],
   ];
-  term_show(title,data);
+  term_show_table(title,data);
 }
