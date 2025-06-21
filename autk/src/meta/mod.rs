@@ -1,18 +1,15 @@
 use std::collections::BTreeMap;
 
 #[derive(Debug,Clone)]
-pub struct ShtMeta{
-  ifp:&'static str,
-  shtna:&'static str,
+pub struct ShtMeta<'meta>{
+  shtna:&'meta str,
   title:usize,
+  ifp:&'meta str,
 }
 #[derive(Debug,Clone)]
-pub struct MatchMeta{
-  ifp:&'static str,
-  shtna:&'static str,
-  title:usize,
-  resu_col:usize,
+pub struct MatchMeta<'meta>{
   match_col:usize,
+  shtli:Vec<&'meta ShtMeta<'meta>>,
 }
 /*
 pub trait ArgParse{

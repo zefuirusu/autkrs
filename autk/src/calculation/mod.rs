@@ -8,6 +8,16 @@ pub mod chsht;
 use std::collections::BTreeMap;
 
 #[derive(Debug)]
+struct RegCondiLine{ // condition line for regular expression;
+  regex_str:Box<String>,
+  match_col:usize,
+}
+#[derive(Debug)]
+pub struct RegCondiMatrix<'line>{ // condition matrix for regular expression;
+  line:&'line RegCondiLine,
+}
+
+#[derive(Debug)]
 pub struct XlSheet<'map>{
     xlmap:&'map BTreeMap<String,u8>,
     // data:Option<DataFrame>,

@@ -131,10 +131,10 @@ struct RowArgs{
 }
 #[derive(Debug,Args)]
 struct MultiMatchArgs{
-  #[arg(short,long="regex",help="regular expression")]
-  regex:String,
-  #[arg(short,long="meta",help="",num_args=1..,value_parser=parse_shtmeta)]
-  meta:Vec<MatchMeta>,
+  // #[arg(short,long="regex",help="regular expression")]
+  // regex:String,
+  // #[arg(short,long="meta",help="",num_args=1..,value_parser=parse_shtmeta)]
+  // meta:Vec<MatchMeta>,
 }
 pub fn run_autk()->(){
   let cliargs=AUTK::parse();
