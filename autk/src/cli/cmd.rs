@@ -126,7 +126,7 @@ struct RowArgs{
   shtna:String,
   #[arg(short,long="ifp",value_name="ifp",help="input file path.")]
   ifp:String,
-  #[arg(required=false,default_value="1",short,long="title",value_name="int",help="sheet name")]
+  #[arg(required=false,short,long="title",value_name="int",help="sheet name")]
   title:Option<usize>,
 }
 #[derive(Debug,Args)]
