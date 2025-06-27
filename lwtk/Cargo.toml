@@ -1,0 +1,10 @@
+[package]
+name = "autk"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+calamine = "0.28.0"
+clap = { version = "4.5.40", features = ["derive"] }
+rayon = "1.10.0"
+regex = "1.11.1"
