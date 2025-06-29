@@ -139,12 +139,12 @@ pub fn test_match()->(){
 }
 pub fn test_multi_match()->(){
   let pstr="/home/debvbx/Documents/cd_gl_2024_1-11.xlsx".to_string();
-  let s1="现金".to_string();
+  let s1="^现金.*".to_string();
   let s2="年初余额".to_string();
   let s3="Sheet1".to_string();
   let _lines:Vec<StrMchLine>=vec![
-    StrMchLine{regex_str:&s1,match_cell:(4usize,5usize)},
-    StrMchLine{regex_str:&s2,match_cell:(4usize,10usize)},
+    StrMchLine{regex_str:&s1,match_cell:(1usize,5usize)},
+    StrMchLine{regex_str:&s2,match_cell:(1usize,10usize)},
   ];
   let _shtli:Vec<ShtMeta>=vec![
     ShtMeta{ifp:&pstr,shtna:&s3},
