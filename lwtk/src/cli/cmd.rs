@@ -1,5 +1,7 @@
 use clap::{Parser,Subcommand,Args};
 
+use crate::brother::{ShtMeta,StrMchLine};
+
 #[derive(Debug,Parser)]
 #[
   command(
@@ -21,6 +23,17 @@ enum Lv1option{
       about="read info from Excel file."
     )
   ]cmd1(Lv1cmd1),
+  #[
+    command(
+      name="config",
+      about="config...."
+    )
+  ]cmd2(Lv1cmd2),
+}
+#[derive(Debug,Args)]
+struct Lv1cmd2{
+  #[command(subcommand)]
+  cmd:Lv2option
 }
 #[derive(Debug,Args)]
 struct Lv1cmd1{
@@ -44,4 +57,43 @@ enum Lv2option{
 #[derive(Debug,Args)]
 struct Lv2cmd1{}
 #[derive(Debug,Args)]
-struct Lv2cmd2{}
+struct Lv2cmd2{
+  // #[
+    // arg(
+      // required=true,
+      // short='i',
+      // long="mchl",
+      // value_name="condition",
+      // value_parser="",
+      // help="match lines:filter conditons"
+    // )
+  // ]lines:Vec<StrMchLine>,
+  // #[
+    // arg(
+      // required=true,
+      // short='m',
+      // long="meta",
+      // value_name="sheet meta",
+      // value_parser="",
+      // help="meta data to load Excels."
+    // )
+  // ]shtli:Vec<ShtMeta>
+}
+pub fn run()->(){
+  let cliargs=BaseCmd::parse();
+  match cliargs.cmd{
+    Lv1option::cmd1(_cmd)=>{
+      match _cmd.cmd{
+        Lv2option::cmd1(_cmd)=>{
+          todo!()
+        },
+        Lv2option::cmd2(_cmd)=>{
+          todo!()
+        },
+      }
+    },
+    Lv1option::cmd2(_cmd)=>{
+      todo!()
+    },
+  }
+}

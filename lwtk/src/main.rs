@@ -1,3 +1,3 @@
 fn main()->(){
-  autk::brother::xlmatch::test_match();
+  autk::brother::xlmatch::test_multi_match();
 }
