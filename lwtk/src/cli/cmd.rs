@@ -13,51 +13,85 @@ use crate::brother::{ShtMeta,StrMchLine};
   )
 ]struct BaseCmd{
   #[command(subcommand)]
-  cmd:Lv1option,
+  cmd:BaseSub,
 }
 #[derive(Debug,Subcommand)]
-enum Lv1option{
-  #[
-    command(
-      name="show",
-      about="read info from Excel file."
-    )
-  ]cmd1(Lv1cmd1),
+enum BaseSub{
   #[
     command(
       name="config",
       about="config...."
     )
-  ]cmd2(Lv1cmd2),
+  ]cmd1(Cmd01),
+  #[
+    command(
+      name="show",
+      about="read info from Excel file."
+    )
+  ]cmd2(Cmd02),
 }
 #[derive(Debug,Args)]
-struct Lv1cmd2{
+struct Cmd01{
   #[command(subcommand)]
-  cmd:Lv2option
+  cmd:Cmd01sub
 }
 #[derive(Debug,Args)]
-struct Lv1cmd1{
+struct Cmd02{
   #[command(subcommand)]
-  cmd:Lv2option // option of enum, as args, for Lv1option::cmd1;
+  cmd:Cmd02sub // option of enum, as args, for BaseSub::cmd1;
 }
 #[derive(Debug,Subcommand)]
-enum Lv2option{
+enum Cmd01sub{
+  #[
+    command(
+      name="new",
+    )
+  ]cmd1(Cmd0101),
+}
+#[derive(Debug,Subcommand)]
+enum Cmd02sub{
   #[
     command(
       name="shape",
     )
-  ]cmd1(Lv2cmd1),
+  ]cmd1(Cmd0201),
+  #[
+    command(
+      name="sht",
+      about="",
+    )
+  ]cmd2(Cmd0202),
+  #[
+    command(
+      name="row",
+      about="",
+    )
+  ]cmd3(Cmd0203),
+  #[
+    command(
+      name="col",
+      about="",
+    )
+  ]cmd4(Cmd0204),
   #[
     command(
       name="match",
       about="",
     )
-  ]cmd2(Lv2cmd2),
+  ]cmd5(Cmd0205),
 }
 #[derive(Debug,Args)]
-struct Lv2cmd1{}
+struct Cmd0101{}
 #[derive(Debug,Args)]
-struct Lv2cmd2{
+struct Cmd0201{}
+#[derive(Debug,Args)]
+struct Cmd0202{}
+#[derive(Debug,Args)]
+struct Cmd0203{}
+#[derive(Debug,Args)]
+struct Cmd0204{}
+#[derive(Debug,Args)]
+struct Cmd0205{
   // #[
     // arg(
       // required=true,
@@ -82,18 +116,17 @@ struct Lv2cmd2{
 pub fn run()->(){
   let cliargs=BaseCmd::parse();
   match cliargs.cmd{
-    Lv1option::cmd1(_cmd)=>{
+    BaseSub::cmd1(_cmd)=>{
       match _cmd.cmd{
-        Lv2option::cmd1(_cmd)=>{
-          todo!()
-        },
-        Lv2option::cmd2(_cmd)=>{
-          todo!()
-        },
+        Cmd01sub::cmd1(_args)=>{todo!()},
+        _=>{todo!()}
       }
     },
-    Lv1option::cmd2(_cmd)=>{
-      todo!()
+    BaseSub::cmd2(_cmd)=>{
+      match _cmd.cmd{
+        Cmd02sub::cmd5(_args)=>{todo!()},
+        _=>{todo!()}
+      }
     },
   }
 }
