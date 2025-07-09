@@ -153,5 +153,8 @@ pub fn test_multi_match()->(){
     &_lines,
     &_shtli,
   );
-  println!("{:?}",&resu);
+  println!("{:?}",&resu.len());
+  for row in &resu{
+    println!("{:?}",&row);
+  }
 }
