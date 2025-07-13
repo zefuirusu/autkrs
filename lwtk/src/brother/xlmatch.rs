@@ -158,3 +158,25 @@ pub fn test_multi_match()->(){
     println!("{:?}",&row);
   }
 }
+pub fn test2_multi_match()->(){
+    // 找到问题所在了，设计是求交集，运行结果是求并集；
+    let pstr="/home/debvbx/Documents/purchase_report.xlsx".to_string();
+    let shtna="data".to_string();
+    let s1="^蜜蜂牌".to_string();
+    let s2="爱坤新凯".to_string();
+    let _lines:Vec<StrMchLine>=vec![
+        StrMchLine{regex_str:&s1,match_cell:(1usize,3usize)},
+        StrMchLine{regex_str:&s2,match_cell:(1usize,6usize)},
+    ];
+    let _shtli:Vec<ShtMeta>=vec![
+        ShtMeta{ifp:&pstr,shtna:&shtna},
+    ];
+  let resu:Vec<Vec<String>>=multi_sht_match(
+    &_lines,
+    &_shtli,
+  );
+  println!("{:?}",&resu.len());
+  for row in &resu{
+    println!("{:?}",&row);
+  }
+}
