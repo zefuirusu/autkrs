@@ -92,7 +92,10 @@ fn multi_sht_match<'f>(
     }
   ).flatten().collect()
 }
+
+// This function seems useless:
 // single sheet(range,multiple rows), single condition:
+/*
 pub fn sht_str_match<'sm>( // sm:str-match
   line:&'sm StrMchLine,
   sht:&'sm ShtMeta,
@@ -102,6 +105,7 @@ pub fn sht_str_match<'sm>( // sm:str-match
     line,
   )
 }
+*/
 // single sheet(range), multi-conditions:
 pub fn sht_num_compare<'nc>(
 )->(){ // nc:number-compare

@@ -16,9 +16,9 @@ pub struct StrMchLine<'arg>{ // string-match line
   regex_str:&'arg String,
   match_cell:(usize,usize), // (row_index,col_index) starts from (1,1);
 }
-#[derive(Debug)]
-pub struct NumCmpLine{ // number-compare line
-  cmp_exp:String, // expression to compare;
+#[derive(Debug,Clone,Copy)]
+pub struct NumCmpLine<'arg>{ // number-compare line
+  cmp_exp:&'arg String, // expression to compare;
   cmp_cell:(usize,usize), // (row_index,col_index) starts from (1,1);
 }
 pub fn extsn<'p>(
