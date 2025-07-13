@@ -85,14 +85,10 @@ fn multi_sht_match<'f>(
 )->Vec<Vec<String>>{
   _shtli.par_iter().map(
     |sht|{
-      _lines.par_iter().map(
-        |line|{
-          base_filter(
-            &get_sht_data(sht,),
-            line
-          )
-        }
-      ).flatten().collect::<Vec<Vec<String>>>()
+        adv_filter(
+            get_sht_data(sht),
+            _lines,
+        )
     }
   ).flatten().collect()
 }
