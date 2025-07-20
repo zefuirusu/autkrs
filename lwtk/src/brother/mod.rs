@@ -4,17 +4,32 @@ pub mod xlcmp;
 
 use rayon::prelude::*;
 use std::path::{Path};
-use calamine::{open_workbook,Data,Xlsx,Xls,Range,Reader};
+use calamine::{open_workbook,Data,Xlsx,Xls,Range,Reader,XlsxError,XlsError};
 
+#[derive(Debug)]
+pub enum ArgErr{
+  IfpErr,
+  ShtErr,
+}
 #[derive(Debug,Clone,Copy)]
 pub struct ShtMeta<'arg>{
-  ifp:&'arg String,
   shtna:&'arg String,
+  ifp:&'arg String,
+}
+impl<'arg> ShtMeta<'arg>{
+  pub fn new(_shtna:&'arg String,_ifp:&'arg String,)->Self{
+    Self{shtna:_shtna,ifp:_ifp,}
+  }
 }
 #[derive(Debug,Clone,Copy)]
 pub struct StrMchLine<'arg>{ // string-match line
   regex_str:&'arg String,
   match_cell:(usize,usize), // (row_index,col_index) starts from (1,1);
+}
+impl<'arg> StrMchLine<'arg>{
+  pub fn new(_regex_str:&'arg String,_match_cell:(usize,usize))->Self{
+    Self{regex_str:_regex_str,match_cell:_match_cell}
+  }
 }
 #[derive(Debug,Clone,Copy)]
 pub struct NumCmpLine<'arg>{ // number-compare line
@@ -60,29 +75,38 @@ pub fn value2str(
 // get Range<Data> from ShtMeta:
 pub fn get_sht_data<'xl>( // sheet to range
   sht:&'xl ShtMeta,
-)->Range<Data>{
+)->Result<Range<Data>,String>{
   let path:&'xl Path=Path::new(sht.ifp.as_str());
-  let range=match extsn(&sht.ifp){
-          Some(_any_extension)=>{
-            match _any_extension{
-              "xlsx"=>{
-                // type rdtp=Xlsx<calamine::Reader<std::io::BufReader<std::fs::File>>>;
-                // open_workbook::<rdtp,&Path>(path)
-                open_workbook::<Xlsx<_>,&Path>(path)
-                .expect("check the input path!")
-                .worksheet_range(sht.shtna.as_str())
-                .expect("Sheet may not exist!")
-              },
-              "xls"=>{
-                open_workbook::<Xls<_>,&Path>(path)
-                .expect("check the input path!")
-                .worksheet_range(sht.shtna.as_str())
-                .expect("Sheet may not exist!")
-              },
-              _=>{calamine::Range::default()}
-            }
-          },
-          None=>{calamine::Range::default()},
+  match extsn(&sht.ifp){
+    Some(_any_extension)=>{
+      match _any_extension{
+        "xlsx"=>{
+          // type rdtp=Xlsx<calamine::Reader<std::io::BufReader<std::fs::File>>>;
+          // open_workbook::<rdtp,&Path>(path)
+          match open_workbook::<Xlsx<_>,&Path>(path){
+            Ok(mut _reader)=>{
+              match _reader.worksheet_range(sht.shtna.as_str()){
+                Ok(_range)=>{return Ok(_range)},
+                _=>{return Err(format!("Invalid sheet: {}",sht.shtna))}
+              }
+            },
+            _=>{return Err(format!("Invalid path: {}",sht.ifp))},
+          }
+        },
+        "xls"=>{
+          match open_workbook::<Xls<_>,&Path>(path){
+            Ok(mut _reader)=>{
+              match _reader.worksheet_range(sht.shtna.as_str()){
+                Ok(_range)=>{return Ok(_range)},
+                _=>{return Err(format!("Invalid sheet: {}",sht.shtna))}
+              }
+            },
+            _=>{return Err(format!("Invalid path: {}",sht.ifp))},
+          }
+        },
+        _=>{return Err(format!("Invalid file type: {}",_any_extension.to_string()))}
+      }
+    },
+    None=>{return Err(format!("Invalid path, no extension."))},
   };
-  return range;
 }

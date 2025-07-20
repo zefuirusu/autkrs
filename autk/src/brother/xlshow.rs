@@ -35,7 +35,7 @@ pub fn get_row(
         .expect("This sheet does not exist!")
         .expect("Fail to get range!")
         .rows()
-        .nth(row_index-1)
+        .nth(row_index-1) // calamine::Range has 0-based index, which starts from (0,0);
         .expect("Fail to the this row!")
         .into_par_iter()
         .map(
@@ -67,5 +67,12 @@ pub fn get_rows(
 pub fn get_col(
   col_index:usize
 )->Vec<String>{
+  todo!()
+}
+pub fn get_sht(
+  shtna:String,
+  ifp:String,
+  title:usize,
+)->Vec<Vec<String>>{
   todo!()
 }

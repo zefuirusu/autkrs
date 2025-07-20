@@ -29,6 +29,21 @@ pub fn term_show_table(
   }
   println!("{}",table);
 }
+fn row_from_multi_table(
+  // TODO brother::xlshow::get_title_from_tables;
+  lines:Vec<(String,(usize,usize))>,
+  shtli:Vec<(String,String)>,
+)->Vec<Vec<String>>{
+  todo!()
+}
+pub fn term_show_multi_table(
+  rows:Vec<Vec<String>>,
+)->(){
+  /*
+  show tables independently;
+  */
+  term_show_rows(rows);
+}
 #[test]
 pub fn try_show_table()->(){
   let title:Vec<String>=vec!["a".to_string(),"b".to_string(),"c".to_string()];

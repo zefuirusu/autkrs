@@ -53,27 +53,21 @@ pub fn get_shape(
   shape
 }
 pub fn get_row<'xl>(
-  _row_index:Option<usize>,// starts from 1;
+  _row_index:usize,// starts from 1;
   sht:&'xl ShtMeta,
 )->Vec<String>{
-  match _row_index{
-    Some(row_index)=>{
-        get_sht_data(sht).rows()
-        .nth(row_index-1)
-        .expect("Fail to the this row!")
-        .into_par_iter()
-        .map(
-          |cell_value|{
-            value2str(cell_value)
-          }
-        )
-        // .into_iter()
-        .collect()
-    },
-    None=>{
-      Vec::new()
-    },
-  }
+    get_sht_data(sht)
+      .expect("failed to get sheet range!")
+      .rows()
+      .nth(_row_index-1)
+      .expect("Fail to the this row!")
+      .into_par_iter()
+      .map(
+        |cell_value|{
+          value2str(cell_value)
+        }
+      )
+      .collect()
 }
 pub fn get_rows<'xl>(
   rows_index:Vec<usize>,
@@ -84,7 +78,7 @@ pub fn get_rows<'xl>(
     .map(
       |row_index|{
         get_row(
-          Some(row_index),
+          row_index,
           sht,
         )
       }
@@ -93,5 +87,9 @@ pub fn get_rows<'xl>(
 pub fn get_col(
   // col_index:usize
 )->Vec<String>{
+  todo!()
+}
+pub fn get_title_from_tables(
+)->Vec<Vec<String>>{
   todo!()
 }

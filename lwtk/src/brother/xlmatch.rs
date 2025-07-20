@@ -79,18 +79,24 @@ fn adv_filter<'f>( // f:filter
     ).collect()
 }
 // multiple sheets(ranges), multiple conditions:
-fn multi_sht_match<'f>(
+pub fn multi_sht_match<'f>(
   _lines:&'f Vec<StrMchLine>,
   _shtli:&'f Vec<ShtMeta>,
 )->Vec<Vec<String>>{
+  /*
+  Column structure of `ShtMeta` must be the same.
+  */
   _shtli.par_iter().map(
     |sht|{
-        adv_filter(
-            get_sht_data(sht),
-            _lines,
-        )
+      adv_filter(
+          get_sht_data(sht)
+            .expect("`fn mutli_sht_match` cannot get sheet range!"),
+          _lines,
+      )
     }
-  ).flatten().collect()
+  )
+  .flatten()
+  .collect()
 }
 
 // This function seems useless:
@@ -131,11 +137,11 @@ pub fn test_match()->(){
   // crate::utils::check(&p2.capacity());
   // let wb:Result<Xlsx<_>,calamine::XlsxError>=calamine::open_workbook(p1);
   // crate::utils::check(&wb);
-  let resu:Vec<Vec<String>>=sht_str_match(
-    &StrMchLine{regex_str:&String::from("现金"),match_cell:(4usize,5usize)},
-    &ShtMeta{ifp:&pstr.to_string(),shtna:&String::from("Sheet1")},
-  );
-  println!("{:?}",resu);
+  // let resu:Vec<Vec<String>>=sht_str_match(
+  //   &StrMchLine{regex_str:&String::from("现金"),match_cell:(4usize,5usize)},
+  //   &ShtMeta{ifp:&pstr.to_string(),shtna:&String::from("Sheet1")},
+  // );
+  // println!("{:?}",resu);
 }
 pub fn test_multi_match()->(){
   let pstr="/home/debvbx/Documents/cd_gl_2024_1-11.xlsx".to_string();

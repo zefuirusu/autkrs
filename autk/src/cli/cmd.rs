@@ -79,6 +79,13 @@ enum Showlv2cmd{
   ]Row(RowArgs),
   #[
     command(
+      name="sht",
+      about="show one or several rows.",
+      arg_required_else_help=true,
+    )
+  ]Sht(ShtArgs),
+  #[
+    command(
       name="shape",
       about="show shape of the Excel.",
       arg_required_else_help=true,
@@ -129,6 +136,24 @@ struct RowArgs{
   #[arg(required=false,short,long="title",value_name="int",help="sheet name")]
   title:Option<usize>,
 }
+#[derive(Debug,Clone,Args)]
+struct ShtArgs{
+  #[arg(
+    index=1,
+    value_name="sheet_name",
+    num_args=1,
+  )]shtna:String,
+  #[arg(
+    index=2,
+    value_name="path",
+    num_args=1,
+  )]ifp:String,
+  #[arg(
+    value_name="title_row",
+    num_args=1,
+    required=false,
+  )]title:Option<usize>,
+}
 #[derive(Debug,Args)]
 struct MultiMatchArgs{
   // #[arg(short,long="regex",help="regular expression")]
@@ -172,6 +197,9 @@ pub fn run_autk()->(){
               _row_args.clone().shtna,
             ),
           );
+        },
+        Showlv2cmd::Sht(_shtargs)=>{
+          todo!()
         },
         Showlv2cmd::Shape(_ifp)=>{
           println!("{:?}",get_shape(_ifp.ifp));
