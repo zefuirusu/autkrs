@@ -1,8 +1,8 @@
 use comfy_table::{Cell,Table,ContentArrangement};
 use rayon::prelude::*;
 
-pub fn term_show_rows(
-  rows:Vec<Vec<String>>
+pub fn term_show_rows<'show>(
+  rows:&'show Vec<Vec<String>>
 )->()
 {
   let mut table:Table=Table::new();
@@ -11,9 +11,9 @@ pub fn term_show_rows(
   }
   println!("{}",table);
 }
-pub fn term_show_table(
-  title:Vec<String>,
-  rows:Vec<Vec<String>>,
+pub fn term_show_table<'show>(
+  title:&'show Vec<String>,
+  rows:&'show Vec<Vec<String>>,
 )
 ->()
 {
@@ -36,8 +36,8 @@ fn row_from_multi_table(
 )->Vec<Vec<String>>{
   todo!()
 }
-pub fn term_show_multi_table(
-  rows:Vec<Vec<String>>,
+pub fn term_show_multi_table<'show>(
+  rows:&Vec<Vec<String>>,
 )->(){
   /*
   show tables independently;

@@ -1,5 +1,4 @@
 use clap::{Parser,Subcommand,Args};
-
 use crate::brother::{ShtMeta,StrMchLine};
 
 #[derive(Debug,Parser)]
@@ -93,23 +92,60 @@ struct Cmd0201{
 struct Cmd0202{
   #[arg(
     required=true,
+    index=1,
     value_name="sheet name",
     help="sheet name"
   )]shtna:String,
   #[arg(
     required=true,
+    index=2,
     value_name="path",
     help="input file path",
   )]ifp:String,
   #[arg(
     required=false,
+    short='t',
     long="title",
-    value_name="title",
-    help="1-based index of the title row."
+    value_name="int",
+    help="1-based row index of the title."
   )]title:Option<usize>,
 }
 #[derive(Debug,Args)]
-struct Cmd0203{}
+struct Cmd0203{
+    #[arg(
+        required=true,
+        short='n',
+        long="num",
+        value_name="int",
+        num_args=1..,
+        // value_delimiter=',',
+        value_parser=super::psargs::parse_range,
+        help="1-based row index",
+    )]num:Vec<usize>,
+    #[arg(
+        required=true,
+        // index=1,
+        short='s',
+        long="shtna",
+        value_name="str",
+        help="sheet name",
+    )]shtna:String,
+    #[arg(
+        required=true,
+        // index=2,
+        short='i',
+        long="ifp",
+        value_name="str",
+        help="input file path",
+    )]ifp:String,
+    #[arg(
+        required=false,
+        short='t',
+        long="title",
+        value_name="int",
+        help="1-based row inded for the title.",
+    )]title:Option<usize>,
+}
 #[derive(Debug,Args)]
 struct Cmd0204{}
 #[derive(Debug,Args)]
@@ -134,6 +170,16 @@ struct Cmd0205{
      help="meta data to load Excels."
     )
   ]shtli:Vec<(String,String)>,
+  #[
+  arg(
+    required=false,
+    short='o',
+    long="save",
+    value_name="shtna,ifp",
+    value_parser=super::psargs::parse_sht,
+    help="save path for the output data",
+    )
+  ]save:Option<(String,String)>,
   #[
     arg(
       required=false,
@@ -164,24 +210,62 @@ pub fn run()->(){
           );
         },
         Cmd02sub::cmd2(_args)=>{ // show sht
-          let sht=crate::brother::ShtMeta::new(&_args.ifp,&_args.shtna);
+          let sht=crate::brother::ShtMeta::new(&_args.shtna,&_args.ifp);
           let shape:(usize,usize)=match crate::brother::get_sht_data(&sht){
-            Ok(_range)=>{_range.get_size()},
-            _=>{(0,0)}
+            Ok(_range)=>{
+              let shape:(usize,usize)=_range.get_size();
+              println!(
+                "shape:{:?},name:{:?},path:{:?}",
+                &shape,
+                &_args.shtna,
+                &_args.ifp,
+              );
+              shape
+            },
+            _=>{println!("blank sheet!");(0,0)}
           };
           match _args.title{
            Some(_title)=>{
              super::evince::term_show_table(
-               crate::brother::xlshow::get_row(_title,&sht),
-               crate::brother::xlshow::get_rows(((_title+1)..=shape.0).collect(),&sht),
+               &crate::brother::xlshow::get_row(_title,&sht),
+               &crate::brother::xlshow::get_rows(((_title+1)..=shape.0).collect(),&sht),
              )
            },
            None=>{
-             super::evince::term_show_rows(
-               crate::brother::xlshow::get_rows((1..=shape.0).collect(),&sht)
-             )
+             let data:Vec<Vec<String>>=crate::brother::xlshow::get_rows((1..=shape.0).collect(),&sht);
+             for row in data.into_iter(){
+               println!("{:?}",row);
+             }
            },
           }
+        },
+        Cmd02sub::cmd3(_args)=>{ // show row
+            let sht=crate::brother::ShtMeta::new(
+                &_args.shtna,
+                &_args.ifp,
+            );
+            match _args.title{
+                Some(_title)=>{
+                    super::evince::term_show_table(
+                        &crate::brother::xlshow::get_row(
+                            _title,
+                            &sht,
+                        ),
+                        &crate::brother::xlshow::get_rows(
+                            _args.num,
+                            &sht,
+                        ),
+                    );
+                },
+                None=>{
+                    super::evince::term_show_rows(
+                        &crate::brother::xlshow::get_rows(
+                            _args.num,
+                            &sht,
+                        ),
+                    );
+                },
+            }
         },
         Cmd02sub::cmd5(_args)=>{ // show match
           let data=crate::brother::xlmatch::multi_sht_match(
@@ -197,11 +281,20 @@ pub fn run()->(){
             None=>{false}
           };
           if if_pretty==true{
-            super::evince::term_show_multi_table(data);
+            super::evince::term_show_multi_table(&data);
           }else{
-            for row in data{
+            for row in &data{
               println!("{:?}",row);
             }
+          }
+          match _args.save{
+            Some(_sht)=>{
+              crate::brother::xlwt::rgstr2xl(
+                &data,
+                &crate::brother::ShtMeta::new(&_sht.0,&_sht.1)
+              )
+            },
+            None=>{;},
           }
         },
         _=>{todo!()}

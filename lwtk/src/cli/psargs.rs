@@ -69,8 +69,40 @@ pub fn parse_str_condition<'arg>(
        ) 
     }
 }
-fn parse_num_condition<'arg>(
-    argstr:&'arg str
+pub fn parse_num_condition<'arg>(
+    argstr:&'arg str,
 )->Result<Vec<NumCmpLine<'arg>>,String>{
     todo!()
+}
+pub fn parse_range<'arg>(
+    argstr:&'arg str,
+)->Result<Vec<usize>,String>{
+    let mut num:Vec<usize>=Vec::new();
+    for part in argstr.split(','){
+        if part.contains('-'){
+            let range: Vec<&str> = part.split('-').collect();
+            if range.len()  != 2 {
+                return Err(format!("Invalid range: {}", part));
+            }
+            match range[0].parse::<usize>(){
+                Ok(rdx)=>{
+                    match range[1].parse::<usize>(){
+                        Ok(cdx)=>{
+                            num.extend((rdx..=cdx).collect::<Vec<usize>>());
+                        },
+                        _=>{return Err(format!("Invalid range: {}", range[0]));},
+                    }
+                },
+                _=>{return Err(format!("Invalid range: {}", range[0]));}
+            }
+        }else{
+            num.push(
+                part.parse::<usize>().unwrap()
+            );
+        }
+    }
+    match num.len(){
+        0=>{Err("Invalid range!".to_string())},
+        _=>{Ok(num)}
+    }
 }

@@ -1,6 +1,7 @@
 pub mod xlshow;
 pub mod xlmatch;
 pub mod xlcmp;
+pub mod xlwt;
 
 use rayon::prelude::*;
 use std::path::{Path};
