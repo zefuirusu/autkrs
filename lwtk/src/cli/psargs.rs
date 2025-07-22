@@ -1,4 +1,4 @@
-use crate::brother::{ShtMeta,StrMchLine,NumCmpLine};
+// use crate::brother::{ShtMeta,StrMchLine,NumCmpLine};
 /*
 TODO
 #[derive(Debug,Clone,Copy)]
@@ -42,7 +42,7 @@ pub fn parse_sht<'arg>(
 }
 pub fn parse_str_condition<'arg>(
     argstr:&'arg str
-)->Result<(String,(usize,usize)),String>{
+)->Result<(String,(usize,usize)),String>{//(regex_str,(rdx,cdx))
     /*
     input: --line regstr,row_index,col_index
     output: (regstr,(row_index,col_index))
@@ -71,38 +71,70 @@ pub fn parse_str_condition<'arg>(
 }
 pub fn parse_num_condition<'arg>(
     argstr:&'arg str,
-)->Result<Vec<NumCmpLine<'arg>>,String>{
+)->Result<(String,(usize,usize)),String>{// (cmp_exp,(rdx,cdx))
     todo!()
 }
 pub fn parse_range<'arg>(
     argstr:&'arg str,
 )->Result<Vec<usize>,String>{
+    /*
+    Currently, this function is not being used at `/src/cli/cmd.rs`;
+    */
     let mut num:Vec<usize>=Vec::new();
     for part in argstr.split(','){
         if part.contains('-'){
-            let range: Vec<&str> = part.split('-').collect();
+            let range: Vec<&str> = part.split('-').collect::<Vec<&str>>();
             if range.len()  != 2 {
-                return Err(format!("Invalid range: {}", part));
-            }
-            match range[0].parse::<usize>(){
-                Ok(rdx)=>{
-                    match range[1].parse::<usize>(){
-                        Ok(cdx)=>{
-                            num.extend((rdx..=cdx).collect::<Vec<usize>>());
-                        },
-                        _=>{return Err(format!("Invalid range: {}", range[0]));},
+                return Err(format!("Invalid range format: {}", part));
+            }else{
+                match range[0].parse::<usize>(){
+                    Ok(_left)=>{
+                        match range[1].parse::<usize>(){
+                            Ok(_right)=>{
+                                num.extend((_left..=_right).collect::<Vec<usize>>());
+                            },
+                            _=>{
+                                // num.push(0usize);
+                                return Err(format!("Invalid ceiling value: {}", range[1]));
+                            },
+                        }
+                    },
+                    _=>{
+                        // num.push(0usize);
+                        return Err(format!("Invalid floor value: {}", range[0]));
                     }
-                },
-                _=>{return Err(format!("Invalid range: {}", range[0]));}
+                }
             }
         }else{
-            num.push(
-                part.parse::<usize>().unwrap()
-            );
+            match part.parse::<usize>(){
+                Ok(_v)=>{
+                    num.push(_v);
+                },
+                _=>{
+                    // num.push(0usize);
+                    return Err(format!("Invalid arg:{}",part));
+                },
+            }
         }
     }
+    println!("check passed num:");
+    crate::utils::check(&num);
     match num.len(){
-        0=>{Err("Invalid range!".to_string())},
-        _=>{Ok(num)}
+        0=>{
+            return Err(format!("No args parsed:{:?}",&num));
+        },
+        _=>{
+            // let num:Vec<usize>=num.into_iter().filter(|x|{*x !=0usize}).collect::<Vec<usize>>();
+            return Ok(num);
+        }
     }
+}
+#[test]
+fn test_parse_range()->(){
+    assert_eq!(
+        parse_range(
+            "3,4,9-11,6,23-25,5"
+        ).unwrap(),
+        vec![3,4,9,10,11,6,23,24,25,5],
+    );
 }

@@ -3,112 +3,98 @@ use crate::brother::{ShtMeta,StrMchLine};
 
 #[derive(Debug,Parser)]
 #[
-  command(
-    author="Skandha Zhu",
-    name="autk",
-    version="1.0.1",
-    about="AUTK, rust version.",
-    long_about="Auditors' Toolkit.",
-  )
+    command(
+        author="Skandha Zhu",
+        name="autk",
+        version="1.0.1",
+        about="AUTK, rust version.",
+        long_about="Auditors' Toolkit.",
+    )
 ]struct BaseCmd{
-  #[command(subcommand)]
-  cmd:BaseSub,
+    #[command(subcommand)]
+    cmd:BaseSub,
 }
 #[derive(Debug,Subcommand)]
 enum BaseSub{
-  #[
-    command(
-      name="config",
-      about="config...."
-    )
-  ]cmd1(Cmd01),
-  #[
-    command(
-      name="show",
-      about="read info from Excel file."
-    )
-  ]cmd2(Cmd02),
+    #[command(
+        name="config",
+        about="config...."
+    )]cmd1(Cmd01),
+    #[command(
+        name="show",
+        about="read info from Excel file."
+    )]cmd2(Cmd02),
 }
 #[derive(Debug,Args)]
 struct Cmd01{
-  #[command(subcommand)]
-  cmd:Cmd01sub
+    #[command(subcommand)]
+    cmd:Cmd01sub
 }
 #[derive(Debug,Args)]
 struct Cmd02{
-  #[command(subcommand)]
-  cmd:Cmd02sub // option of enum, as args, for BaseSub::cmd1;
+    #[command(subcommand)]
+    cmd:Cmd02sub // option of enum, as args, for BaseSub::cmd1;
 }
 #[derive(Debug,Subcommand)]
 enum Cmd01sub{
-  #[
-    command(
+    #[command(
       name="new",
     )
-  ]cmd1(Cmd0101),
+    ]cmd1(Cmd0101),
 }
 #[derive(Debug,Subcommand)]
 enum Cmd02sub{
-  #[
-    command(
-      name="shape",
-      about="show shape of sheets in the file.",
+    #[command(
+        name="shape",
+        about="show shape of sheets in the file.",
+    )]cmd1(Cmd0201),
+    #[command(
+        name="sht",
+        about="show the whole expected sheet.",
+    )]cmd2(Cmd0202),
+    #[command(
+        name="row",
+        about="show the target row data.",
+    )]cmd3(Cmd0203),
+    #[command(
+        name="col",
+        about="show the target column data.",
     )
-  ]cmd1(Cmd0201),
-  #[
-    command(
-      name="sht",
-      about="show the whole expected sheet.",
-    )
-  ]cmd2(Cmd0202),
-  #[
-    command(
-      name="row",
-      about="show the target row data.",
-    )
-  ]cmd3(Cmd0203),
-  #[
-    command(
-      name="col",
-      about="show the target column data.",
-    )
-  ]cmd4(Cmd0204),
-  #[
-    command(
-      name="match",
-      about="match specific column by regular expression.",
-    )
-  ]cmd5(Cmd0205),
+    ]cmd4(Cmd0204),
+    #[command(
+        name="match",
+        about="match specific column by regular expression.",
+    )]cmd5(Cmd0205),
 }
 #[derive(Debug,Args)]
 struct Cmd0101{
 }
 #[derive(Debug,Args)]
 struct Cmd0201{
-  #[arg(index=1,value_name="path",help="input file path")]
-  ifp:String,
+    #[arg(index=1,value_name="path",help="input file path")]
+    ifp:String,
 }
 #[derive(Debug,Args)]
 struct Cmd0202{
-  #[arg(
-    required=true,
-    index=1,
-    value_name="sheet name",
-    help="sheet name"
-  )]shtna:String,
-  #[arg(
-    required=true,
-    index=2,
-    value_name="path",
-    help="input file path",
-  )]ifp:String,
-  #[arg(
-    required=false,
-    short='t',
-    long="title",
-    value_name="int",
-    help="1-based row index of the title."
-  )]title:Option<usize>,
+    #[arg(
+        required=true,
+        index=1,
+        value_name="sheet name",
+        help="sheet name"
+    )]shtna:String,
+    #[arg(
+        required=true,
+        index=2,
+        value_name="path",
+        help="input file path",
+    )]ifp:String,
+    #[arg(
+        required=false,
+        short='t',
+        long="title",
+        value_name="int",
+        help="1-based row index of the title."
+    )]title:Option<usize>,
 }
 #[derive(Debug,Args)]
 struct Cmd0203{
@@ -118,8 +104,8 @@ struct Cmd0203{
         long="num",
         value_name="int",
         num_args=1..,
-        // value_delimiter=',',
-        value_parser=super::psargs::parse_range,
+        value_delimiter=',',
+        // value_parser=super::psargs::parse_range,
         help="1-based row index",
     )]num:Vec<usize>,
     #[arg(
@@ -150,45 +136,37 @@ struct Cmd0203{
 struct Cmd0204{}
 #[derive(Debug,Args)]
 struct Cmd0205{
-  #[
-    arg(
-     required=true,
-     short='r',
-     long="mchl",
-     value_name="regex_str,row_idx,col_idx",
-     value_parser=super::psargs::parse_str_condition,
-     help="match lines:filter conditons"
-    )
-  ]lines:Vec<(String,(usize,usize))>,
-  #[
-    arg(
-     required=true,
-     short='m',
-     long="meta",
-     value_name="shtna,ifp",
-     value_parser=super::psargs::parse_sht,
-     help="meta data to load Excels."
-    )
-  ]shtli:Vec<(String,String)>,
-  #[
-  arg(
-    required=false,
-    short='o',
-    long="save",
-    value_name="shtna,ifp",
-    value_parser=super::psargs::parse_sht,
-    help="save path for the output data",
-    )
-  ]save:Option<(String,String)>,
-  #[
-    arg(
-      required=false,
-      short='p',
-      long="pretty",
-      value_name="bool",
-      help="if true, show in pretty table; else show the original data;"
-    )
-  ]pretty:Option<bool>,
+    #[arg(
+        required=true,
+        short='r',
+        long="mchl",
+        value_name="regex_str,row_idx,col_idx",
+        value_parser=super::psargs::parse_str_condition,
+        help="match lines:filter conditons"
+    )]lines:Vec<(String,(usize,usize))>,
+    #[arg(
+        required=true,
+        short='m',
+        long="meta",
+        value_name="shtna,ifp",
+        value_parser=super::psargs::parse_sht,
+        help="meta data to load Excels."
+    )]shtli:Vec<(String,String)>,
+    #[arg(
+        required=false,
+        short='o',
+        long="save",
+        value_name="shtna,ifp",
+        value_parser=super::psargs::parse_sht,
+        help="save path for the output data",
+    )]save:Option<(String,String)>,
+    #[arg(
+        required=false,
+        short='p',
+        long="pretty",
+        value_name="bool",
+        help="if true, show in pretty table; else show the original data;"
+    )]pretty:Option<bool>,
 }
 pub fn run()->(){
   let cliargs=BaseCmd::parse();
@@ -196,7 +174,7 @@ pub fn run()->(){
     BaseSub::cmd1(_cmd)=>{ // config
       match _cmd.cmd{
         Cmd01sub::cmd1(_args)=>{ // config new
-          todo!()
+            todo!()
         },
         _=>{todo!()}
       }
@@ -228,14 +206,19 @@ pub fn run()->(){
            Some(_title)=>{
              super::evince::term_show_table(
                &crate::brother::xlshow::get_row(_title,&sht),
-               &crate::brother::xlshow::get_rows(((_title+1)..=shape.0).collect(),&sht),
+               &crate::brother::xlshow::get_rows(
+                   ((_title+1)..=shape.0).collect(),
+                   &sht,
+               ),
              )
            },
            None=>{
-             let data:Vec<Vec<String>>=crate::brother::xlshow::get_rows((1..=shape.0).collect(),&sht);
-             for row in data.into_iter(){
-               println!("{:?}",row);
-             }
+             super::evince::term_show_rows(
+                 &crate::brother::xlshow::get_rows(
+                     (1..=shape.0).collect::<Vec<usize>>(),
+                     &sht,
+                 )
+             );
            },
           }
         },
@@ -262,7 +245,7 @@ pub fn run()->(){
                         &crate::brother::xlshow::get_rows(
                             _args.num,
                             &sht,
-                        ),
+                        )
                     );
                 },
             }
