@@ -157,9 +157,10 @@ struct Cmd0205{
         short='o',
         long="save",
         value_name="shtna,ifp",
-        value_parser=super::psargs::parse_sht,
+        num_args=2,
+        // value_parser=super::psargs::parse_sht,
         help="save path for the output data",
-    )]save:Option<(String,String)>,
+    )]save:Option<Vec<String>>,
     #[arg(
         required=false,
         short='p',
@@ -274,7 +275,7 @@ pub fn run()->(){
             Some(_sht)=>{
               crate::brother::xlwt::rgstr2xl(
                 &data,
-                &crate::brother::ShtMeta::new(&_sht.0,&_sht.1)
+                &crate::brother::ShtMeta::new(&_sht[0],&_sht[1])
               )
             },
             None=>{;},

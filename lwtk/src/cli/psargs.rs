@@ -26,7 +26,9 @@ pub fn parse_sht<'arg>(
     input: --sht sheet1,path1
     ouput:(sheet1,path1)
     */
-    let parts:Vec<&str>=argstr.split(',').map(|s|s.trim()).collect::<Vec<&str>>();
+    let parts:Vec<&str>=argstr.split(',')
+        .map(|s|s.trim())
+        .collect::<Vec<&str>>();
     if parts.len() != 2{
         return Err(
             format!(
