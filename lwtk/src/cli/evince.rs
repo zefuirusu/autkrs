@@ -1,5 +1,4 @@
 use comfy_table::{Cell,Table,ContentArrangement};
-use rayon::prelude::*;
 
 fn get_prepared_table()->Table{
     let mut table:Table=Table::new();
@@ -19,15 +18,18 @@ pub fn term_show_rows<'show>(
 )->()
 {
     let mut table:Table=get_prepared_table();
-    table.set_header(
-        (1..=rows[0].len()).map(
-            |title_index|{
-                Cell::new(title_index)
-                    .add_attribute(comfy_table::Attribute::Bold)
-            }
-        )
-    );
-    load_rows(&mut table,rows);
+    if rows.len()==0{
+    }else{
+        table.set_header(
+            (1..=rows[0].len()).map(
+                |title_index|{
+                    Cell::new(title_index)
+                        .add_attribute(comfy_table::Attribute::Bold)
+                }
+            )
+        );
+        load_rows(&mut table,rows);
+    }
     println!("{}",&table);
 }
 pub fn term_show_table<'show>(
@@ -49,8 +51,8 @@ pub fn term_show_table<'show>(
     println!("{}",table);
 }
 fn row_from_multi_table(
-    lines:Vec<(String,(usize,usize))>,
-    shtli:Vec<(String,String)>,
+    _lines:Vec<(String,(usize,usize))>,
+    _shtli:Vec<(String,String)>,
 )->Vec<Vec<String>>{
     // TODO brother::xlshow::get_title_from_tables;
     todo!()
@@ -59,8 +61,8 @@ pub fn term_show_multi_table<'show>(
     rows:&Vec<Vec<String>>,
 )->(){
     /*
-    TODO
-    show tables independently;
+    TODO: call `term_show_rows()` currently, need to be upgrade.
+    `Should` show tables independently;
     */
     term_show_rows(rows);
 }

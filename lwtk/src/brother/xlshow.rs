@@ -1,11 +1,11 @@
-use calamine::{open_workbook, Range, Reader, Xls, Xlsx};
 use rayon::prelude::*;
+use calamine::{open_workbook, Range, Reader, Xls, Xlsx};
 use std::collections::HashMap;
 use std::path::Path;
 
-use crate::brother::{extsn, get_sht_data, value2str, ShtMeta};
+use crate::brother::{get_sht_data, value2str, ShtMeta};
 
-pub fn get_shape(ifp: String) -> HashMap<String, Vec<usize>> {
+pub fn get_shape(ifp: &String) -> HashMap<String, Vec<usize>> {
     //TODO: This function does not run at multi-thread by rayon currently;
     //TODO: This function cannot distinguish `xlsx` or `xls`;
     // match extsn(ifp.as_str()){
@@ -40,9 +40,11 @@ pub fn get_shape(ifp: String) -> HashMap<String, Vec<usize>> {
     // }
     let mut shape: HashMap<String, Vec<usize>> = HashMap::new();
     let mut wb: Xlsx<_> =
-        open_workbook(Path::new(ifp.as_str())).expect("Cannot open Excel! Invalid file path!");
+        open_workbook(Path::new(ifp))
+            .expect("Cannot open Excel! Invalid file path!");
     for shtna in wb.sheet_names() {
-        let range: Range<_> = wb.worksheet_range(&shtna).expect("Cannot get range!");
+        let range: Range<_> = wb.worksheet_range(&shtna)
+            .expect("Cannot get range!");
         shape.insert(
             shtna.to_string(),
             Vec::from([range.get_size().0, range.get_size().1]),
@@ -51,7 +53,7 @@ pub fn get_shape(ifp: String) -> HashMap<String, Vec<usize>> {
     shape
 }
 pub fn get_row<'xl>(
-    _row_index: usize, // starts from 1;
+    _row_index: usize, // 1-based index.starts from 1;
     sht: &'xl ShtMeta,
 ) -> Vec<String> {
     get_sht_data(sht)
@@ -63,13 +65,17 @@ pub fn get_row<'xl>(
         .map(|cell_value| value2str(cell_value))
         .collect()
 }
-pub fn get_rows<'xl>(rows_index: Vec<usize>, sht: &'xl ShtMeta) -> Vec<Vec<String>> {
+pub fn get_rows<'xl>(
+    rows_index: Vec<usize>,
+    sht: &'xl ShtMeta
+) -> Vec<Vec<String>> {
     rows_index
         .into_par_iter()
         .map(|row_index| get_row(row_index, sht))
         .collect()
 }
-pub fn get_col(// col_index:usize
+pub fn get_col(
+    // col_index:usize
 ) -> Vec<String> {
     todo!()
 }

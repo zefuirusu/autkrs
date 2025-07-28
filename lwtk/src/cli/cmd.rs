@@ -1,5 +1,4 @@
 use clap::{Parser,Subcommand,Args};
-use crate::brother::{ShtMeta,StrMchLine};
 
 #[derive(Debug,Parser)]
 #[
@@ -19,11 +18,11 @@ enum BaseSub{
     #[command(
         name="config",
         about="config...."
-    )]cmd1(Cmd01),
+    )]Cmd1(Cmd01),
     #[command(
         name="show",
         about="read info from Excel file."
-    )]cmd2(Cmd02),
+    )]Cmd2(Cmd02),
 }
 #[derive(Debug,Args)]
 struct Cmd01{
@@ -33,61 +32,60 @@ struct Cmd01{
 #[derive(Debug,Args)]
 struct Cmd02{
     #[command(subcommand)]
-    cmd:Cmd02sub // option of enum, as args, for BaseSub::cmd1;
+    cmd:Cmd02sub // option of enum, as args, for BaseSub::Cmd1;
 }
 #[derive(Debug,Subcommand)]
 enum Cmd01sub{
     #[command(
       name="new",
     )
-    ]cmd1(Cmd0101),
+    ]Cmd1(Cmd0101),
 }
 #[derive(Debug,Subcommand)]
 enum Cmd02sub{
     #[command(
         name="shape",
         about="show shape of sheets in the file.",
-    )]cmd1(Cmd0201),
+    )]Cmd1(Cmd0201),
     #[command(
         name="sht",
         about="show the whole expected sheet.",
-    )]cmd2(Cmd0202),
+    )]Cmd2(Cmd0202),
     #[command(
         name="row",
         about="show the target row data.",
-    )]cmd3(Cmd0203),
+    )]Cmd3(Cmd0203),
     #[command(
         name="col",
         about="show the target column data.",
     )
-    ]cmd4(Cmd0204),
+    ]Cmd4(Cmd0204),
     #[command(
         name="match",
         about="match specific column by regular expression.",
-    )]cmd5(Cmd0205),
+    )]Cmd5(Cmd0205),
 }
 #[derive(Debug,Args)]
 struct Cmd0101{
 }
 #[derive(Debug,Args)]
-struct Cmd0201{
-    #[arg(index=1,value_name="path",help="input file path")]
-    ifp:String,
+struct Cmd0201{ // show shape
+    #[arg(
+        index=1,
+        value_name="path",
+        help="input file path"
+    )]ifp:Vec<String>,
 }
 #[derive(Debug,Args)]
-struct Cmd0202{
+struct Cmd0202{ // show sht
     #[arg(
         required=true,
-        index=1,
-        value_name="sheet name",
-        help="sheet name"
-    )]shtna:String,
-    #[arg(
-        required=true,
-        index=2,
-        value_name="path",
-        help="input file path",
-    )]ifp:String,
+        short='m',
+        long="meta",
+        value_parser=super::psargs::parse_sht,
+        value_name="string,string",
+        help="<ifp,shtna>:meta data to load Excels"
+    )]shtli:Vec<(String,String)>, //(ifp,shtna),
     #[arg(
         required=false,
         short='t',
@@ -97,7 +95,7 @@ struct Cmd0202{
     )]title:Option<usize>,
 }
 #[derive(Debug,Args)]
-struct Cmd0203{
+struct Cmd0203{ // show row
     #[arg(
         required=true,
         short='n',
@@ -110,57 +108,49 @@ struct Cmd0203{
     )]num:Vec<usize>,
     #[arg(
         required=true,
-        // index=1,
-        short='s',
-        long="shtna",
-        value_name="str",
-        help="sheet name",
-    )]shtna:String,
-    #[arg(
-        required=true,
-        // index=2,
-        short='i',
-        long="ifp",
-        value_name="str",
-        help="input file path",
-    )]ifp:String,
+        short='m',
+        long="meta",
+        value_name="string,string",
+        value_parser=super::psargs::parse_sht,
+        help="<ifp,shtna>:meta data to load Excels:"
+    )]shtli:(String,String), //(ifp,shtna),
     #[arg(
         required=false,
         short='t',
         long="title",
         value_name="int",
-        help="1-based row inded for the title.",
+        help="1-based row index for the title.",
     )]title:Option<usize>,
 }
 #[derive(Debug,Args)]
 struct Cmd0204{}
 #[derive(Debug,Args)]
-struct Cmd0205{
+struct Cmd0205{ // show match
     #[arg(
         required=true,
         short='r',
         long="mchl",
-        value_name="regex_str,row_idx,col_idx",
         value_parser=super::psargs::parse_str_condition,
-        help="match lines:filter conditons"
-    )]lines:Vec<(String,(usize,usize))>,
+        value_name="int,int,string",
+        help="<rdx,cdx,regex>:match lines, filter conditons"
+    )]lines:Vec<(usize,usize,String)>,// (rdx,cdx,regex_str)
     #[arg(
         required=true,
         short='m',
         long="meta",
-        value_name="shtna,ifp",
         value_parser=super::psargs::parse_sht,
-        help="meta data to load Excels."
-    )]shtli:Vec<(String,String)>,
+        value_name="string,string",
+        help="<ifp,shtna>:meta data to load Excels"
+    )]shtli:Vec<(String,String)>,// (ifp,shtna)
     #[arg(
         required=false,
         short='o',
         long="save",
-        value_name="shtna,ifp",
         num_args=2,
-        // value_parser=super::psargs::parse_sht,
-        help="save path for the output data",
-    )]save:Option<Vec<String>>,
+        value_parser=super::psargs::parse_sht,
+        value_name="string,string",
+        help="<ifp,shtna>:save path for the output data",
+    )]save:Option<(String,String)>,// (ifp,shtna)
     #[arg(
         required=false,
         short='p',
@@ -172,62 +162,78 @@ struct Cmd0205{
 pub fn run()->(){
   let cliargs=BaseCmd::parse();
   match cliargs.cmd{
-    BaseSub::cmd1(_cmd)=>{ // config
+    BaseSub::Cmd1(_cmd)=>{ // config
       match _cmd.cmd{
-        Cmd01sub::cmd1(_args)=>{ // config new
+        Cmd01sub::Cmd1(_args)=>{ // config new
             todo!()
         },
-        _=>{todo!()}
+        // _=>{todo!()}
       }
     },
-    BaseSub::cmd2(_cmd)=>{ // show
+    BaseSub::Cmd2(_cmd)=>{ // show
       match _cmd.cmd{
-        Cmd02sub::cmd1(_args)=>{ // show shape
-          println!(
-            "{:?}",
-          crate::brother::xlshow::get_shape(_args.ifp),
-          );
+        Cmd02sub::Cmd1(_args)=>{ // show shape
+            for _ifp in _args.ifp.iter(){
+                println!(
+                    "{:?}:\n\t{:?}",
+                    _ifp,
+                    crate::brother::xlshow::get_shape(_ifp),
+                );
+            }
         },
-        Cmd02sub::cmd2(_args)=>{ // show sht
-          let sht=crate::brother::ShtMeta::new(&_args.shtna,&_args.ifp);
-          let shape:(usize,usize)=match crate::brother::get_sht_data(&sht){
-            Ok(_range)=>{
-              let shape:(usize,usize)=_range.get_size();
-              println!(
-                "shape:{:?},name:{:?},path:{:?}",
-                &shape,
-                &_args.shtna,
-                &_args.ifp,
-              );
-              shape
-            },
-            _=>{println!("blank sheet!");(0,0)}
-          };
-          match _args.title{
-           Some(_title)=>{
-             super::evince::term_show_table(
-               &crate::brother::xlshow::get_row(_title,&sht),
-               &crate::brother::xlshow::get_rows(
-                   ((_title+1)..=shape.0).collect(),
-                   &sht,
-               ),
-             )
-           },
-           None=>{
-             super::evince::term_show_rows(
-                 &crate::brother::xlshow::get_rows(
-                     (1..=shape.0).collect::<Vec<usize>>(),
-                     &sht,
-                 )
-             );
-           },
-          }
+        Cmd02sub::Cmd2(_args)=>{ // show sht
+            println!("{:?}",&_args.shtli);
+            for _sht in _args.shtli.iter(){
+                let sht=crate::brother::ShtMeta::from(_sht);
+                let shape:(usize,usize)=match crate::brother::get_sht_data(&sht){
+                    Ok(_range)=>{
+                        let shape:(usize,usize)=_range.get_size();
+                        println!(
+                            "shape:{:?},sht:{:?}",
+                            &shape,
+                            &sht,
+                        );
+                        shape
+                    },
+                    _=>{println!("blank sheet!{:?}",&sht);(0usize,0usize)}
+                };
+                match _args.title{
+                    Some(_title)=>{
+                        super::evince::term_show_table(
+                            &crate::brother::xlshow::get_row(_title,&sht),
+                            &crate::brother::xlshow::get_rows(
+                                ((_title+1)..=shape.0).collect(),
+                                &sht,
+                            ),
+                        )
+                    },
+                    None=>{
+                        super::evince::term_show_rows(
+                            &crate::brother::xlshow::get_rows(
+                                (1..=shape.0).collect::<Vec<usize>>(),
+                                &sht,
+                            )
+                        );
+                    },
+                }
+            }
+            // let sht=crate::brother::ShtMeta::new(&_args.shtna,&_args.ifp);
+            // let shape:(usize,usize)=match crate::brother::get_sht_data(&sht){
+            //     Ok(_range)=>{
+            //         let shape:(usize,usize)=_range.get_size();
+            //         println!(
+            //             "shape:{:?},name:{:?},path:{:?}",
+            //             &shape,
+            //             &_args.shtna,
+            //             &_args.ifp,
+            //         );
+            //         shape
+            //     },
+            //     _=>{println!("blank sheet!");(0,0)}
+            // };
         },
-        Cmd02sub::cmd3(_args)=>{ // show row
-            let sht=crate::brother::ShtMeta::new(
-                &_args.shtna,
-                &_args.ifp,
-            );
+        Cmd02sub::Cmd3(_args)=>{ // show row
+            let sht=crate::brother::ShtMeta::from(&_args.shtli);
             match _args.title{
                 Some(_title)=>{
                     super::evince::term_show_table(
@@ -251,35 +257,35 @@ pub fn run()->(){
                 },
             }
         },
-        Cmd02sub::cmd5(_args)=>{ // show match
-          let data=crate::brother::xlmatch::multi_sht_match(
-          &_args.lines.iter().map(
-            |_line|{crate::brother::StrMchLine::new(&_line.0,_line.1)}
-          ).collect::<Vec<crate::brother::StrMchLine>>(),
-          &_args.shtli.iter().map(
-            |_sht|{crate::brother::ShtMeta::new(&_sht.0,&_sht.1)}
-          ).collect::<Vec<crate::brother::ShtMeta>>(),
-          );
-          let if_pretty:bool=match _args.pretty{
-            Some(_pretty)=>{_pretty},
-            None=>{false}
-          };
-          if if_pretty==true{
-            super::evince::term_show_multi_table(&data);
-          }else{
-            for row in &data{
-              println!("{:?}",row);
+        Cmd02sub::Cmd5(_args)=>{ // show match
+            let data=crate::brother::xlmatch::multi_sht_match(
+                &_args.lines.iter().map(
+                    |_line|{crate::brother::StrMchLine::from(_line)}
+                ).collect::<Vec<crate::brother::StrMchLine>>(),
+                &_args.shtli.iter().map(
+                    |_sht|{crate::brother::ShtMeta::from(_sht)}
+                ).collect::<Vec<crate::brother::ShtMeta>>(),
+            );
+            let if_pretty:bool=match _args.pretty{
+                Some(_pretty)=>{_pretty},
+                None=>{false}
+            };
+            if if_pretty==true{
+                super::evince::term_show_multi_table(&data);
+            }else{
+                for row in &data{
+                    println!("{:?}",row);
+                }
             }
-          }
-          match _args.save{
-            Some(_sht)=>{
-              crate::brother::xlwt::rgstr2xl(
-                &data,
-                &crate::brother::ShtMeta::new(&_sht[0],&_sht[1])
-              )
-            },
-            None=>{;},
-          }
+            match _args.save{
+                Some(_sht)=>{
+                    crate::brother::xlwt::rgstr2xl(
+                        &data,
+                        &crate::brother::ShtMeta::from(&_sht)
+                    )
+                },
+                None=>{},
+            }
         },
         _=>{todo!()}
       }

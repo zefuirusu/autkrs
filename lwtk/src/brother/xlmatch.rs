@@ -77,7 +77,8 @@ pub fn multi_sht_match<'f>(
         .par_iter()
         .map(|sht| {
             adv_filter(
-                get_sht_data(sht).expect("`fn mutli_sht_match` cannot get sheet range!"),
+                get_sht_data(sht)
+                    .expect("`fn mutli_sht_match` cannot get sheet range!"),
                 _lines,
             )
         })
@@ -106,18 +107,18 @@ pub fn sht_num_compare<'nc>() -> () {
 
 pub fn multi_col_str_match<'sm>(
     // sm:str-match
-    lines: &'sm Vec<StrMchLine>,
+    _lines: &'sm Vec<StrMchLine>,
     sht: &'sm ShtMeta,
 ) -> Vec<Vec<String>> {
-    let range: Range<Data>;
-    let path: &Path = Path::new(sht.ifp.as_str());
+    let _range: Range<Data>;
+    let _path: &Path = Path::new(sht.ifp.as_str());
     //TODO simulate col_str_match;
-    let mut resu: Vec<Vec<String>> = Vec::new();
-    return resu;
+    let mut _resu: Vec<Vec<String>> = Vec::new();
+    return _resu;
 }
 // #[test]
 pub fn test_match() -> () {
-    let pstr: &str = "/home/debvbx/Documents/cd_gl_2024_1-11.xlsx";
+    // let pstr: &str = "/home/debvbx/Documents/cd_gl_2024_1-11.xlsx";
     // let p1:&Path=Path::new(pstr);
     // let p2:PathBuf=PathBuf::from(pstr);
     // crate::utils::check(&p1.extension().unwrap());

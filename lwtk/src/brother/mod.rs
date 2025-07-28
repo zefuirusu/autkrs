@@ -3,7 +3,7 @@ pub mod xlmatch;
 pub mod xlshow;
 pub mod xlwt;
 
-use calamine::{open_workbook, Data, Range, Reader, Xls, XlsError, Xlsx, XlsxError};
+use calamine::{open_workbook, Data, Range, Reader, Xls, Xlsx};
 use rayon::prelude::*;
 use std::path::Path;
 
@@ -28,20 +28,25 @@ impl<'arg> ShtMeta<'arg> {
         }
     }
 }
+impl<'arg> std::convert::From<&'arg (String,String)> for ShtMeta<'arg>{
+    fn from(item:&'arg (String,String))->Self{
+        Self{
+            ifp:&item.0, //path
+            shtna:&item.1 // sheet name
+        }
+    }
+}
 #[derive(Debug, Clone, Copy)]
 pub struct StrMchLine<'arg> {
     // string-match line
     regex_str: &'arg String,
     match_cell: (usize, usize), // (row_index,col_index) starts from (1,1);
 }
-impl<'arg> StrMchLine<'arg> {
-    pub fn new(
-        _regex_str: &'arg String,
-        _match_cell: (usize, usize),
-    ) -> Self {
-        Self {
-            regex_str: _regex_str,
-            match_cell: _match_cell,
+impl<'arg> std::convert::From<&'arg (usize,usize,String)> for StrMchLine<'arg>{
+    fn from(item:&'arg (usize,usize,String))->Self{
+        Self{
+            regex_str:&item.2,
+            match_cell:(item.0,item.1),
         }
     }
 }

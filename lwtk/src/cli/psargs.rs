@@ -21,54 +21,55 @@ pub struct NumCmpLine<'arg>{ // number-compare line
 */
 pub fn parse_sht<'arg>(
     argstr:&'arg str
-)->Result<(String,String),String>{
+)->Result<(String,String),String>
     /*
-    input: --sht sheet1,path1
-    ouput:(sheet1,path1)
+    input: --sht path1,sheet1
+    ouput:(path1,sheet1)
     */
+{
     let parts:Vec<&str>=argstr.split(',')
         .map(|s|s.trim())
         .collect::<Vec<&str>>();
     if parts.len() != 2{
         return Err(
             format!(
-                "Invalid argument: expected `sheet,path`, got `{}`",
+                "Invalid argument: expected `path,sheet`, got `{}`",
                 argstr
             )
         );
     }else{
+        let   _ifp=parts[0].to_string();
+        let _shtna=parts[1].to_string();
         return Ok(
-            (parts[0].to_string(),parts[1].to_string())
+            (_ifp,_shtna)
         );
     }
 }
 pub fn parse_str_condition<'arg>(
     argstr:&'arg str
-)->Result<(String,(usize,usize)),String>{//(regex_str,(rdx,cdx))
+)->Result<(usize,usize,String),String>
     /*
-    input: --line regstr,row_index,col_index
-    output: (regstr,(row_index,col_index))
+    input: --line row_index,col_index,regstr
+    output: (row_index,col_index,regstr)
     */
+{
     let parts:Vec<&str>=argstr.split(',').map(
         |s|s.trim()
     ).collect::<Vec<&str>>();
     if parts.len() !=3{
         return Err(
             format!(
-                "Invalid argument: expected `regex_str,row_index,col_index`, got `{}`",
+                "Invalid argument: expected `row_index,col_index,regex_str`, got `{}`",
                 argstr,
             )
         )
     }else{
-       return Ok(
-           (
-               parts[0].to_string(),
-               (
-                   parts[1].parse::<usize>().expect("invalid row index"),
-                   parts[2].parse::<usize>().expect("invalid column index"),
-               )
-           )
-       ) 
+        let _row_index:usize=parts[0].parse::<usize>().expect("Invalid row index");
+        let _col_index:usize=parts[1].parse::<usize>().expect("Invalid column index");
+        let _regstr:String=parts[2].to_string();
+        return Ok(
+            (_row_index,_col_index,_regstr)
+        ) 
     }
 }
 pub fn parse_num_condition<'arg>(

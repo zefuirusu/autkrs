@@ -20,8 +20,8 @@ pub fn rgstr2xl<'save>(
     }(save_sht.ifp.as_str())
     .expect("Invalid path!");
     let mut wb:Workbook=Workbook::new();
-    let mut ws:&mut Worksheet=wb.add_worksheet_with_low_memory();
-    ws.set_name(save_sht.shtna.as_str());
+    let ws:&mut Worksheet=wb.add_worksheet_with_low_memory();
+    ws.set_name(save_sht.shtna.as_str()).expect(format!("Fail to save to sheet:{:?}",save_sht.shtna).as_str());
     ws.write_row_matrix(
         0,0,
         vec![
@@ -29,8 +29,8 @@ pub fn rgstr2xl<'save>(
                 |x|{x.to_string()}
             ).collect::<Vec<String>>()
         ],
-    );
-    ws.write_row_matrix(1,0,data);
+    ).expect(format!("Failed to write title row.").as_str());
+    ws.write_row_matrix(1,0,data).expect(format!("Failed to write matrix data.").as_str());
     wb.save_to_writer(file)
         .expect("failed to write!");
     println!(
