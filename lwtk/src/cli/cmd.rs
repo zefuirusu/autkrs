@@ -191,7 +191,6 @@ pub fn run()->(){
             }
         },
         Cmd02sub::Cmd2(_args)=>{ // show sht
-            println!("{:?}",&_args.shtli);
             for _sht in _args.shtli.iter(){
                 let sht=crate::brother::ShtMeta::from(_sht);
                 let shape:(usize,usize)=match crate::brother::get_sht_data(&sht){
