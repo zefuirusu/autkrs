@@ -174,10 +174,19 @@ pub fn run()->(){
       match _cmd.cmd{
         Cmd02sub::Cmd1(_args)=>{ // show shape
             for _ifp in _args.ifp.iter(){
-                println!(
-                    "{:?}:\n\t{:?}",
-                    _ifp,
-                    crate::brother::xlshow::get_shape(_ifp),
+                let _shape_map:std::collections::BTreeMap<String,Vec<usize>>=std::collections::BTreeMap::from_iter(crate::brother::xlshow::get_shape(_ifp));
+                let _shape_vec:Vec<Vec<String>>=_shape_map.into_iter().map(
+                    |(_shtna,_shape)|{
+                        vec![_shtna,_shape[0].to_string(),_shape[1].to_string()]
+                    }
+                ).collect::<Vec<Vec<String>>>();
+                println!("{:?}:",_ifp,);
+                super::evince::term_show_table(
+                    &Vec::from(["sheet","rows","columns"])
+                        .into_iter()
+                        .map(|x|x.to_string())
+                        .collect(),
+                    &_shape_vec
                 );
             }
         },
