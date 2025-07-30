@@ -146,10 +146,9 @@ struct Cmd0205{ // show match
         required=false,
         short='o',
         long="save",
-        num_args=2,
         value_parser=super::psargs::parse_sht,
         value_name="string,string",
-        help="<ifp,shtna>:save path for the output data",
+        help="<ifp,shtna>:save path and sheet name for the output data",
     )]save:Option<(String,String)>,// (ifp,shtna)
     #[arg(
         required=false,
