@@ -3,10 +3,10 @@ use clap::{Parser,Subcommand,Args};
 #[derive(Debug,Parser)]
 #[
     command(
-        author="Skandha Zhu",
+        author="Skandha",
         name="autk",
-        version="1.0.1",
-        about="AUTK, rust version.",
+        version="0.4.0",
+        about="AUTK",
         long_about="Auditors' Toolkit.",
     )
 ]struct BaseCmd{
