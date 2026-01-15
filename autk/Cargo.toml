@@ -7,10 +7,9 @@ description="Auditors' Toolkit."
 readme = "README.md"
 homepage="https://github.com/zefuirusu/autkrs"
 license="GPL-3.0"
-license-file="LICENSE"
 keywords=["cli","audit","tool","excel"]
 categories=["command-line-utilities"]
-publish=false
+publish=true
 
 [[bin]]
 name="autk"
