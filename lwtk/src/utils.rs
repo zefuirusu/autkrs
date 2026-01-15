@@ -1,6 +1,5 @@
 use std::any::type_name;
 use std::mem::{size_of,align_of_val};
-
 #[derive(Debug,Clone)]
 struct LayoutInfo<T>
     where T:std::fmt::Debug,
