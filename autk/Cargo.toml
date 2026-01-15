@@ -1,17 +1,26 @@
 [package]
 name = "autk"
-author="sk"
-version = "0.1.0"
+version = "0.4.0"
+authors =["Skandha <skandhask@qq.com>"]
 edition = "2024"
+description="Auditors' Toolkit."
+readme = "README.md"
+homepage="https://github.com/zefuirusu/autkrs"
+license="GPL-3.0"
+license-file="LICENSE"
+keywords=["cli","audit","tool","excel"]
+categories=["command-line-utilities"]
+publish=false
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name="autk"
+path="src/main.rs"
+test=false
 
 [dependencies]
-calamine = "0.22.1"
-clap = { version = "4.5.36", features = ["derive"] }
+calamine = "0.28.0"
+clap = { version = "4.5.40", features = ["derive"] }
 comfy-table = "7.1.4"
-# polars = { version = "0.49.1", features = ["full", "lazy", "sql", "ndarray", "dtype-decimal"] }
 rayon = "1.10.0"
-regex = "1.8.4"
-serde = { version = "1.0.219", features = ["derive"] }
-tokio = { version = "1.45.1", features = ["default"] }
+regex = "1.11.1"
+rust_xlsxwriter = { version = "0.89.1", features = ["constant_memory"] }
